@@ -1,5 +1,7 @@
 # Generative Models
 
+Refer to the notes in this repository.
+
 This repository contains structured notes on **generative models**, focusing on approaches based on **stochastic differential equations (SDEs)** and **ordinary differential equations (ODEs)**. The material develops intuition starting from random walks and stochastic processes and connects them to modern generative modeling techniques such as diffusion models, score matching, Poisson Flow Generative Models, and continuous flow models.
 
 The emphasis is on **conceptual understanding and mathematical structure**, rather than implementation details.
