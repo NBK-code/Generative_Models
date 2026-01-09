@@ -2,144 +2,198 @@
 
 Refer to the notes in this repository.
 
-This repository contains structured notes on **generative models**, focusing on approaches based on **stochastic differential equations (SDEs)** and **ordinary differential equations (ODEs)**. The material develops intuition starting from random walks and stochastic processes and connects them to modern generative modeling techniques such as diffusion models, score matching, Poisson Flow Generative Models, and continuous flow models.
+This repository contains structured notes on **generative models**, focusing on approaches based on **stochastic differential equations (SDEs)** and **ordinary differential equations (ODEs)**. The notes closely follow the structure of the original document and preserve its subsection hierarchy, while presenting the material in a concise, repository-friendly format.
 
-The emphasis is on **conceptual understanding and mathematical structure**, rather than implementation details.
+The emphasis is on **conceptual understanding and modeling intuition**, rather than detailed derivations or implementations.
 
 ---
 
 ## Table of Contents
 
 - Introduction  
-- Stochastic Processes  
-- Stochastic Differential Equations  
-- Ito’s Lemma  
-- Fokker–Planck and Kolmogorov Equations  
-- Reversing Diffusion  
+- Stochastic Calculus  
+  - Discrete Random Walk  
+  - Brownian Motion  
+  - Stochastic Differential Equations  
+  - Ito’s Lemma  
+  - Fokker–Planck Equation  
+  - Random Walk as a Markov Process  
+  - Forward Kolmogorov Equation  
+  - Backward Kolmogorov Equation  
+  - Reversing the Diffusion Process  
 - Diffusion Models  
 - Score Matching  
 - Poisson Flow Generative Models  
 - Continuous Flow Models  
+- Citation  
 
 ---
 
-## 1. Introduction
+## Introduction
 
-Generative models aim to learn a data distribution and generate new samples from it. In these notes, we study two broad (non-exhaustive) families of generative models:
+We study two broad (non-exhaustive) classes of generative models:
 
-- **SDE-based models**, which rely on stochastic dynamics and noise
-- **ODE-based models**, which rely on deterministic flows
+- Models based on **stochastic differential equations (SDEs)**  
+- Models based on **ordinary differential equations (ODEs)**  
 
-Both frameworks describe how probability distributions evolve over time and provide principled ways to generate samples.
+Both approaches describe how probability distributions evolve over time and provide principled ways to generate samples from complex data distributions.
 
 ---
 
-## 2. Stochastic Processes
+## Stochastic Calculus
 
-The discussion begins with **discrete random walks**, where a particle moves randomly at each time step. Key observations include:
+This section builds the mathematical intuition required for diffusion-based generative models by starting from simple stochastic processes and progressively moving toward continuous-time descriptions.
+
+### Discrete Random Walk
+
+A discrete random walk models a particle that moves randomly at each time step. Key observations include:
 
 - The expected position remains zero
-- Variance grows linearly with time
-- Increments over disjoint time intervals are independent
+- The variance grows linearly with the number of steps
+- Differences over time intervals depend only on the interval length
 
-As the step size goes to zero and the number of steps goes to infinity, the random walk converges to **Brownian motion**, a continuous-time stochastic process with Gaussian increments.
-
----
-
-## 3. Stochastic Differential Equations (SDEs)
-
-An SDE combines two components:
-
-- A **drift term**, representing deterministic motion
-- A **diffusion term**, representing random fluctuations
-
-SDEs describe the evolution of systems under uncertainty and form the foundation of diffusion-based generative models.
+These properties motivate a continuous-time limit.
 
 ---
 
-## 4. Ito’s Lemma
+### Brownian Motion
 
-Ito’s Lemma is the stochastic counterpart of the chain rule. It explains how a function of a stochastic variable evolves over time.
+Brownian motion is the continuous limit of a discrete random walk. Its defining properties are:
 
-A key takeaway is that second-order terms in the stochastic increment contribute at first order in time. This phenomenon has no analogue in ordinary calculus and is central to stochastic analysis.
+- Gaussian-distributed increments
+- Zero mean displacement over infinitesimal time intervals
+- Variance proportional to elapsed time
 
----
-
-## 5. Fokker–Planck and Kolmogorov Equations
-
-Instead of tracking individual stochastic trajectories, one can study the evolution of **probability densities**.
-
-- The **Fokker–Planck equation** (also called the forward Kolmogorov equation) describes how probability densities evolve forward in time.
-- The **backward Kolmogorov equation** describes how transition probabilities evolve backward in time.
-
-These equations connect microscopic dynamics (SDEs) with macroscopic probability flow.
+Brownian motion serves as the canonical noise process in continuous-time stochastic models.
 
 ---
 
-## 6. Reversing a Diffusion Process
+### Stochastic Differential Equations
 
-Diffusion processes gradually destroy information by adding noise. However, if the probability density at each time is known, it is possible to define a **reverse-time dynamics**.
+Stochastic differential equations combine:
 
-The reverse process depends on the gradient of the log-probability density, often referred to as the **score function**. Learning this score function enables generative sampling by reversing the diffusion.
+- A **drift term**, representing deterministic evolution
+- A **diffusion term**, representing stochastic noise
 
----
-
-## 7. Diffusion Models
-
-Diffusion models operate in two phases:
-
-1. **Forward process**: data is gradually corrupted by noise until it becomes indistinguishable from pure noise
-2. **Reverse process**: noise is gradually removed to generate new samples
-
-The reverse process is learned using neural networks and relies on estimating the score of noisy data at different time steps.
+SDEs describe how systems evolve under uncertainty and form the foundation of diffusion-based generative modeling.
 
 ---
 
-## 8. Score Matching
+### Ito’s Lemma
 
-Score matching is a technique for learning the gradient of the log-density directly, without explicitly modeling the density itself.
+Ito’s Lemma is the stochastic analogue of the chain rule. It explains how functions of stochastic processes evolve over time.
+
+A key insight is that second-order terms in the stochastic increment contribute at first order in time, a phenomenon unique to stochastic calculus.
+
+---
+
+### Fokker–Planck Equation
+
+Rather than tracking individual stochastic trajectories, one can study how **probability densities** evolve.
+
+The Fokker–Planck equation governs the time evolution of the probability density associated with an SDE and provides a bridge between microscopic dynamics and macroscopic distributions.
+
+---
+
+### Random Walk as a Markov Process
+
+Both discrete random walks and Brownian motion are examples of **Markov processes**, where the future state depends only on the present state.
+
+Transition probabilities fully characterize the dynamics, and composition rules allow probabilities to be propagated across time intervals.
+
+---
+
+### Forward Kolmogorov Equation
+
+The forward Kolmogorov equation (another name for the Fokker–Planck equation) describes how transition probabilities evolve forward in time.
+
+It can be derived directly from the Markov property by expanding transition probabilities over infinitesimal time intervals.
+
+---
+
+### Backward Kolmogorov Equation
+
+The backward Kolmogorov equation describes how transition probabilities evolve backward in time with respect to the initial condition.
+
+This equation plays a crucial role in analyzing reverse-time dynamics and conditioning on future states.
+
+---
+
+### Reversing the Diffusion Process
+
+Diffusion processes gradually destroy information by injecting noise. However, if the probability density at each time is known, a **reverse-time process** can be defined.
+
+The reverse dynamics depend on the gradient of the log-probability density, often called the **score function**. This idea underpins modern diffusion-based generative models.
+
+---
+
+## Diffusion Models
+
+Diffusion models generate data using two complementary processes:
+
+1. **Forward process**: data is progressively corrupted by noise until it becomes pure noise  
+2. **Reverse process**: noise is gradually removed to recover structured samples  
+
+The forward process is fixed, while the reverse process is learned using neural networks.
+
+---
+
+## Score Matching
+
+Score matching provides a way to learn the gradient of the log-density without explicitly modeling the density itself.
 
 Key advantages:
 
-- Avoids computing intractable normalization constants
+- Avoids computing normalization constants
 - Learning the score uniquely determines the distribution
 
-Training involves adding noise to data at random times and training a neural network to predict the corresponding score.
+Training involves sampling data, adding noise at random times, and fitting a neural network to predict the score of the noisy data.
 
 ---
 
-## 9. Poisson Flow Generative Models (PFGM)
+## Poisson Flow Generative Models
 
-Poisson Flow Generative Models are **ODE-based** generative models inspired by electrostatics.
+Poisson Flow Generative Models (PFGM) are **ODE-based** generative models inspired by electrostatics.
 
 Core ideas:
 
-- Data points are treated as electric charges
-- The data distribution induces an electric field
-- Samples are generated by flowing along this field
+- Data points act as electric charges
+- The induced electric field defines a flow
+- Samples are generated by following this flow backward
 
 ### Avoiding Mode Collapse
 
-Pure backward flow causes samples to collapse to a point. PFGM avoids this by:
+Naive backward flow leads to collapse of samples. PFGM addresses this by:
 
-- Introducing an extra dimension
+- Introducing an additional dimension
 - Starting samples from a high-dimensional surface
-- Flowing deterministically back to the data space
+- Flowing deterministically back to the data manifold
 
-This guarantees full coverage of the data distribution.
+This guarantees coverage of the full data distribution.
 
 ---
 
-## 10. Continuous Flow Models
+## Continuous Flow Models
 
-Continuous flow models learn a **deterministic vector field** that transforms a simple base distribution into the data distribution.
+Continuous flow models learn a **deterministic vector field** that transforms a simple base distribution (such as a Gaussian) into the data distribution.
 
-Key properties:
+Key characteristics:
 
-- Deterministic sampling
+- Deterministic dynamics
 - Exact likelihood computation
-- Continuous-time transformations
+- Continuous-time transformations using ODEs
 
-A neural network parameterizes the flow, and both data and probability density evolve jointly under an ordinary differential equation.
+A neural network parameterizes the flow, and both data and probability density evolve jointly over time.
 
 ---
+
+## Citation
+
+If you use this work, please cite:
+
+```bibtex
+@article{nagaraj2023genmodels,
+  title={Generative Models},
+  author={Nagaraj, Balakrishnan},
+  year={2023}
+}
